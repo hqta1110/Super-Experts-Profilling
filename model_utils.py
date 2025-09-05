@@ -80,7 +80,7 @@ def get_model(model_path):
     torch.nn.init.uniform_ = skip
     torch.nn.init.normal_ = skip
     with init_empty_weights():
-        model = AutoModelForCausalLM.from_pretrained(model_path, torch_dtype=torch.bfloat16, trust_remote_code=True)
+        model = AutoModelForCausalLM.from_pretrained(model_path, torch_dtype=torch.bfloat16, trust_remote_code=True, device_map="auto")
     model.seqlen = 2048
     return model, tokenizer
 

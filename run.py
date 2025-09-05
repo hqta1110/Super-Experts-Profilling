@@ -45,7 +45,7 @@ def main(args):
     model_st = get_model_safe_tensors(args.model_name)    
     model_name = model.__class__.__name__
     print(model.config)
-    dev = torch.device('cuda:0')
+    dev = torch.device('cuda')
     model.eval()
 
     # initialize evaluator
