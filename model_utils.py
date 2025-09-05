@@ -79,8 +79,22 @@ def get_model(model_path):
     torch.nn.init.kaiming_uniform_ = skip
     torch.nn.init.uniform_ = skip
     torch.nn.init.normal_ = skip
+    # In model_utils.py
+    # 1. Load the model's configuration first.
+    config = AutoConfig.from_pretrained(model_path, trust_remote_code=True)
+
+    # 2. Initialize the model with empty weights on the "meta" device.
+    #    This creates the model structure without using any RAM for the weights.
     with init_empty_weights():
-        model = AutoModelForCausalLM.from_pretrained(model_path, torch_dtype=torch.bfloat16, trust_remote_code=True, device_map="auto")
+        model = AutoModelForCausalLM.from_config(
+            config,
+            torch_dtype=torch.bfloat16,
+            trust_remote_code=True
+        )
+    model.tie_weights()
+
+    # 3. Set the model to evaluation mode.
+    model.eval()
     model.seqlen = 2048
     return model, tokenizer
 
